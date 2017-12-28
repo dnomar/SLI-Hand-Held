@@ -141,6 +141,7 @@
             this.btnRead.Size = new System.Drawing.Size(72, 20);
             this.btnRead.TabIndex = 17;
             this.btnRead.Text = "Leer";
+            this.btnRead.Click += new System.EventHandler(this.btnRead_Click);
             // 
             // btnClear
             // 
@@ -155,7 +156,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(523, 455);
+            this.ClientSize = new System.Drawing.Size(638, 455);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnRead);
             this.Controls.Add(this.button1);

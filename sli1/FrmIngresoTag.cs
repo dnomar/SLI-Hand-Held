@@ -30,5 +30,14 @@ namespace sli1
         {
 
         }
+
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            //ESta informacion deberia venir de un archivo de configuracion
+            //flagAnti = 0x01;
+            //iniAntiQ = (byte)int.Parse(this.cbqvalue.Text);
+            Tag rfidTag = new Tag(0x01, (byte)int.Parse("3"));
+            rfidTag.Read(true);
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace sli1
 {
     /// <summary>
-    /// read tags
+    /// Clase que maneja el comportamiento de los TAGS pudiendo ser RFID o Bar Code
     /// </summary>
     class Tag
     {
@@ -26,7 +26,7 @@ namespace sli1
             this.canReceive = false;
             this.FlagSound = true;
         }
-        public Tag(byte iniAntiQ, byte flagAnti):this()
+        public Tag(byte flagAnti,byte iniAntiQ):this()
         {
             this.iniAntiQ = iniAntiQ;
             this.flagAnti = flagAnti;
@@ -71,20 +71,23 @@ namespace sli1
             set { count = value; }
         }
         //Hasta aqui...
-
+        /// <summary>
+        /// Genera el Thread para que se pueda ejecutar la lectura.
+        /// </summary>
+        /// <param name="run"></param>
         public void Read(Boolean run) {
 
             if (run)
             {
                 //MessageBox.Show("Reading Mode:" + flagAnti + ",Q" + iniAntiQ);
-                canReceive = UHF.UHFInventory(flagAnti, iniAntiQ);
-                if (canReceive)
+                //Activa el Escaneo Físico del Tag de forma continua para leer su data de acuerdo a los parámetros de información.
+                this.canReceive = UHF.UHFInventory(flagAnti, iniAntiQ);
+                if (this.canReceive)
                 {
-
-
-                    //open UII receiving thread
+                    //Abre un UII thread para recibir la data
                     if (thrReceiveUii == null)
                     {
+                        //ReceiveUiiProc se genera como thread
                         thrReceiveUii = new System.Threading.Thread(ReceiveUiiProc);
                         thrReceiveUii.IsBackground = true;
                         thrReceiveUii.Start();
@@ -97,27 +100,27 @@ namespace sli1
             }
             else
             {
-
                 //close UII receiving thread
                 if (thrReceiveUii != null)
                 {
                     thrReceiveUii.Abort();
                     thrReceiveUii = null;
                 }
-                //stop get 
+                //stop get
+                //Deja de escanear para leer físicamente el tag.
                 UHF.UHFStopGet();
             }
         }
 
         private void ReceiveUiiProc()
         {
-            Tag ent = new Tag();
-            int[] uLenUii = new int[1];
-            byte[] uUii = new byte[128]; //UII should be at least 66 bytes
+            int[] uLenUii = new int[1]; //largo del codigo o EPC.
+            byte[] uUii = new byte[128]; //Codigo o EPC - UII should be at least 66 bytes
             while (canReceive)
             {
                 //int[] uLenUii = new int[1];
                 //byte[] uUii = new byte[128];   //UII should be at least 66 bytes
+                //Se extrae la data de la capa física del Hand held
                 if (UHF.UHFGetReceived(uLenUii, uUii))
                 {
                     if (uLenUii[0] > 0)
@@ -127,18 +130,19 @@ namespace sli1
                             Win32.PlayScanSound();
                         }
 
+                        //Se convierte la data de entrada en formato Base a un Array para su lectura
                         string uii = BitConverter.ToString(uUii, 0, uLenUii[0]).Replace("-", "");
 
                         //show to the interface
                         //TagRead ent = new TagRead();
-                        ent.Uii = uii;
-                        ent.Epc = uii.Substring(4, uii.Length - 4);  //Epc
-                        ent.Count = 1;
-                        if (!datalist.ContainsKey(ent.Epc))
+                        Uii = uii;
+                        Epc = uii.Substring(4, uii.Length - 4);  //Epc
+                        Count = 1;
+                        if (!datalist.ContainsKey(Epc))
                         {
-
-                            datalist.Add(ent.Epc, 1);
-                            ListViewItem lv = new ListViewItem();
+                            datalist.Add(Epc, 1);    
+                            //System.out
+                            /*ListViewItem lv = new ListViewItem();
                             lv.Text = (datalist.Count).ToString();
                             lv.SubItems.Add(ent.Epc);
                             lv.SubItems.Add("1");
@@ -150,12 +154,12 @@ namespace sli1
                             _lbSumTagsReadID.Invoke(new EventHandler(delegate
                             {
                                 _lbSumTagsReadID.Text = datalist.Count.ToString();
-                            }));
+                            }));*/
                         }
                         else
                         {
-                            datalist[ent.Epc] += 1;
-                            DisplayTagID(ent);
+                            datalist[Epc] += 1;
+                           // DisplayTagID(ent);
 
                         }
                         //UpdateControl(ent);
