@@ -1,0 +1,11 @@
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\bin\Debug\sli1.exe
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\bin\Debug\sli1.pdb
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.Properties.Resources.resources
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.csproj.GenerateResource.Cache
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.exe
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.pdb
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\bin\Debug\slihh.sdf
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.frm_ingreso.resources
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.FrmMenuPpal.resources
+C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.FrmIngresoTag.resources
