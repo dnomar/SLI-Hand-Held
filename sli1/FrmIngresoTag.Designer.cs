@@ -43,6 +43,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.btnRead = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // mainMenu1
@@ -145,11 +146,20 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(143, 103);
+            this.btnClear.Location = new System.Drawing.Point(92, 127);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(72, 20);
             this.btnClear.TabIndex = 18;
             this.btnClear.Text = "Limpiar";
+            // 
+            // btnStop
+            // 
+            this.btnStop.Location = new System.Drawing.Point(144, 101);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(72, 20);
+            this.btnStop.TabIndex = 23;
+            this.btnStop.Text = "Parar";
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // FrmIngresoTag
             // 
@@ -157,6 +167,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(638, 455);
+            this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnRead);
             this.Controls.Add(this.button1);
@@ -194,5 +205,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnRead;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnStop;
+
+        
     }
 }

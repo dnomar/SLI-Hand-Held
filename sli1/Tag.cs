@@ -17,14 +17,22 @@ namespace sli1
         private byte iniAntiQ;
         private byte flagAnti;
         private bool FlagSound;
+        private int count;
+        private string epc;
+        private string uii;
+        private int serial;
 
-        Dictionary<string, int> datalist = new Dictionary<string, int>();//the reading EPC list and times
+        private Dictionary<string, int> datalist; 
        
 
         public Tag() {
             this.thrReceiveUii = null;
             this.canReceive = false;
             this.FlagSound = true;
+            this.count = 0;
+            this.epc = string.Empty;
+            this.uii = string.Empty;
+            this.serial = 0;
         }
         public Tag(byte flagAnti,byte iniAntiQ):this()
         {
@@ -33,7 +41,7 @@ namespace sli1
         }
 
        //Arreglar de aqui...
-        private int serial = 0;
+
         /// <summary>
         /// serial number
         /// </summary>
@@ -43,7 +51,6 @@ namespace sli1
             set { serial = value; }
         }
 
-        private string uii = string.Empty;
         /// <summary>
         /// UII
         /// </summary>
@@ -52,7 +59,7 @@ namespace sli1
             get { return uii; }
             set { uii = value; }
         }
-        private string epc = string.Empty;
+
         /// <summary>
         /// EPC
         /// </summary>
@@ -61,7 +68,7 @@ namespace sli1
             get { return epc; }
             set { epc = value; }
         }
-        private int count = 0;
+
         /// <summary>
         /// times
         /// </summary>
@@ -75,14 +82,13 @@ namespace sli1
         /// Genera el Thread para que se pueda ejecutar la lectura.
         /// </summary>
         /// <param name="run"></param>
-        public void Read(Boolean run) {
+        public void Read(bool isConnected) {
 
-            if (run)
-            {
                 //MessageBox.Show("Reading Mode:" + flagAnti + ",Q" + iniAntiQ);
                 //Activa el Escaneo Físico del Tag de forma continua para leer su data de acuerdo a los parámetros de información.
-                this.canReceive = UHF.UHFInventory(flagAnti, iniAntiQ);
-                if (this.canReceive)
+                //this.canReceive = UHF.UHFInventory(flagAnti, iniAntiQ);
+                //this.canReceive = UHF.UHFInventory(0x01, 0x15);
+                if (this.canReceive=UHF.UHFInventory(0x01, 0x03))
                 {
                     //Abre un UII thread para recibir la data
                     if (thrReceiveUii == null)
@@ -97,8 +103,14 @@ namespace sli1
                         thrReceiveUii.Start();
                     }
                 }
-            }
-            else
+        }
+       
+        /// <summary>
+        /// Detiene el thread de lectura.
+        /// </summary>
+        public void stopReading() {
+
+            if (UHF.UHFInventory(0x01, 0x03))
             {
                 //close UII receiving thread
                 if (thrReceiveUii != null)
@@ -110,10 +122,12 @@ namespace sli1
                 //Deja de escanear para leer físicamente el tag.
                 UHF.UHFStopGet();
             }
+
         }
 
         private void ReceiveUiiProc()
         {
+            this.datalist = new Dictionary<string, int>();//the reading EPC list and times            
             int[] uLenUii = new int[1]; //largo del codigo o EPC.
             byte[] uUii = new byte[128]; //Codigo o EPC - UII should be at least 66 bytes
             while (canReceive)
@@ -135,12 +149,18 @@ namespace sli1
 
                         //show to the interface
                         //TagRead ent = new TagRead();
+
                         Uii = uii;
                         Epc = uii.Substring(4, uii.Length - 4);  //Epc
                         Count = 1;
                         if (!datalist.ContainsKey(Epc))
                         {
-                            datalist.Add(Epc, 1);    
+                            datalist.Add(Epc, 1);
+                            foreach(string s in datalist.Keys)
+                            {
+                                MessageBox.Show(s);
+                            }
+                            //MessageBox.Show(datalist.Values[0]);
                             //System.out
                             /*ListViewItem lv = new ListViewItem();
                             lv.Text = (datalist.Count).ToString();
