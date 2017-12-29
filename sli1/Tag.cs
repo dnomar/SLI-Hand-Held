@@ -10,7 +10,7 @@ namespace sli1
     /// <summary>
     /// Clase que maneja el comportamiento de los TAGS pudiendo ser RFID o Bar Code
     /// </summary>
-    class Tag
+    class RfidTag:ITag
     {
         private  Thread thrReceiveUii;
         private bool canReceive;
@@ -21,11 +21,12 @@ namespace sli1
         private string epc;
         private string uii;
         private int serial;
+        private FrmIngresoTag form;
 
         private Dictionary<string, int> datalist; 
        
 
-        public Tag() {
+        public RfidTag() {
             this.thrReceiveUii = null;
             this.canReceive = false;
             this.FlagSound = true;
@@ -34,13 +35,17 @@ namespace sli1
             this.uii = string.Empty;
             this.serial = 0;
         }
-        public Tag(byte flagAnti,byte iniAntiQ):this()
+        public RfidTag(byte flagAnti,byte iniAntiQ):this()
         {
             this.iniAntiQ = iniAntiQ;
             this.flagAnti = flagAnti;
         }
 
-       //Arreglar de aqui...
+        public RfidTag(FrmIngresoTag form) : this() 
+        {
+            this.form = form;
+        }
+        //Arreglar de aqui...
 
         /// <summary>
         /// serial number
@@ -77,12 +82,79 @@ namespace sli1
             get { return count; }
             set { count = value; }
         }
+
+        public void write(bool por){
+            return;
+        }
         //Hasta aqui...
+
+        public void singleRead() 
+        {
+            int[] uLenUii = new int[1];
+            byte[] uUii = new byte[128];
+
+            //single recognition
+           // if (this.cbReadMode.SelectedIndex == 0)
+            //{
+                if (UHF.UHFInventorySingle(uLenUii, uUii))
+                {
+                    if (uLenUii[0] > 0)
+                    {
+                        Win32.PlayScanSound();
+                        string uii = BitConverter.ToString(uUii, 0, uLenUii[0]).Replace("-", "");
+                        //EPC is the uii except the ahead two bytes start with 3000EXXXXX
+                        //this.txtReadData.Text = uii.Substring(4, uii.Length - 4);
+                        //MessageBox.Show(uii.Substring(4,uii.Length-4));
+                        this.form.setLblStatus(uii.Substring(4, uii.Length - 4));
+                    }
+                    else
+                    {
+                        //this.txtReadData.Text = "";
+                        //Console.WriteLine("No leyo nada...1");
+                        this.form.setLblStatus("Error en la lectura, largo de EPC = 0");
+                    }
+                }
+                else
+                {
+                    //this.txtReadData.Text = "";
+                    
+                    this.form.setLblStatus("Error No hay Tag para Leer");
+                }
+         /*   }
+            else
+            {
+                //cycle recognition
+                if (UHF.UHFInventory(0x00, 0x03))
+                {
+                    if (UHF.UHFGetReceived(uLenUii, uUii))
+                    {
+                        if (uLenUii[0] > 0)
+                        {
+                            Win32.PlayScanSound();
+                            string uii = BitConverter.ToString(uUii, 0, uLenUii[0]).Replace("-", "");
+                            //EPC is the uii except the ahead two bytes start with 3000EXXXXX
+                            this.txtReadData.Text = uii.Substring(4, uii.Length - 4);
+                        }
+                        else
+                        {
+                            this.txtReadData.Text = "";
+                        }
+                    }
+                    else
+                    {
+                        this.txtReadData.Text = "";
+                    }
+                }
+            }*/
+            //stop reading
+            UHF.UHFStopGet();
+        }
+
         /// <summary>
         /// Genera el Thread para que se pueda ejecutar la lectura.
         /// </summary>
         /// <param name="run"></param>
-        public void Read(bool isConnected) {
+        public void read(bool isConnected) {
 
                 //MessageBox.Show("Reading Mode:" + flagAnti + ",Q" + iniAntiQ);
                 //Activa el Escaneo Físico del Tag de forma continua para leer su data de acuerdo a los parámetros de información.
@@ -94,7 +166,7 @@ namespace sli1
                     if (thrReceiveUii == null)
                     {
                         //ReceiveUiiProc se genera como thread
-                        thrReceiveUii = new System.Threading.Thread(ReceiveUiiProc);
+                        thrReceiveUii = new System.Threading.Thread(receiveUiiProc);
                         thrReceiveUii.IsBackground = true;
                         thrReceiveUii.Start();
                     }
@@ -110,7 +182,7 @@ namespace sli1
         /// </summary>
         public void stopReading() {
 
-            if (UHF.UHFInventory(0x01, 0x03))
+            if (UHF.UHFInventory(0x01, 0x03)) //Desacoplar...
             {
                 //close UII receiving thread
                 if (thrReceiveUii != null)
@@ -125,7 +197,10 @@ namespace sli1
 
         }
 
-        private void ReceiveUiiProc()
+        /// <summary>
+        /// Método que lee la data fisica de la tarjeta irradiada por la antena
+        /// </summary>
+        private void receiveUiiProc()
         {
             this.datalist = new Dictionary<string, int>();//the reading EPC list and times            
             int[] uLenUii = new int[1]; //largo del codigo o EPC.

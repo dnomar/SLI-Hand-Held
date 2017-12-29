@@ -11,7 +11,9 @@ namespace sli1
 {
     public partial class FrmIngresoTag : Form
     {
-        private Tag rfidTag;
+        private RfidTag rfidTag;
+        private FrmMenuPpal frm2;
+
         public FrmIngresoTag()
         {
             InitializeComponent();
@@ -39,8 +41,9 @@ namespace sli1
             //ESta informacion deberia venir de un archivo de configuracion
             //flagAnti = 0x01;
             //iniAntiQ = (byte)int.Parse(this.cbqvalue.Text);
-            this.rfidTag = new Tag(0x01, (byte)int.Parse("3"));
-            rfidTag.Read(true);
+            //this.rfidTag = new RfidTag(0x01, (byte)int.Parse("3"));
+            this.rfidTag = new RfidTag(this);
+            rfidTag.singleRead();
         }
 
         //bool isCon = false;//if being connected
@@ -94,7 +97,7 @@ namespace sli1
         private void init() {
             System.Threading.Thread.Sleep(100);
             //power
-            byte power = 0;
+           // byte power = 0;
 
             /*if (UHF.UHFGetPower(ref power))
             {
@@ -163,5 +166,19 @@ namespace sli1
         {
             this.rfidTag.stopReading();           
         }
+
+        private void btnClearlblStatus_Click(object sender, EventArgs e)
+        {
+            lblStatus.Text="";
+        }
+
+        public void cerrando(object sender, CancelEventArgs e)
+        {
+            MessageBox.Show("Cerrando");
+            frm2 = new FrmMenuPpal();
+            frm2.Show();
+        }
+        
+        
     }
 }
