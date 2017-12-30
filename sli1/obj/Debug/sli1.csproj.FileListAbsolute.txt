@@ -8,4 +8,3 @@ C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1
 C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\bin\Debug\slihh.sdf
 C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.frm_ingreso.resources
 C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.FrmMenuPpal.resources
-C:\Users\slidev01\Documents\Visual Studio 2008\Projects\sli1\sli1\obj\Debug\sli1.FrmIngresoTag.resources
